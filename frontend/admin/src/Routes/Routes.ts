@@ -1,10 +1,30 @@
-import {Home} from '../Pages/Home/Home';
-import {UserListComponent} from "../Components/Users/UserListComponent";
-import React from "react";
-import {UserProfileComponent} from "../Components/Users/UserProfileComponent";
+export const routes = {
+    login: "/login",
+    signIn: "/signIn",
 
-export const Routes = {
-    "/": () => <Home/>,
-    "/list": () => <UserListComponent />,
-    "/profile": () => <UserProfileComponent />
+    home: "/",
+    userList: "/users/list",
+    profile: "/users/profile/:id",
+    myProfile: "/users/myProfile"
 };
+
+export const buildUrl = (route: string, ...params: (string | number)[]) => {
+    const routeParamPlaceholders = route.split("/").filter(p => p.startsWith(":"));
+
+    if (!routeParamPlaceholders.length) {
+        return route;
+    }
+
+    if (routeParamPlaceholders.length !== params.length) {
+        throw Error(`Not all parameters are provided! Route: ${route}`);
+    }
+
+    let i = 0;
+    return route.replace(new RegExp(routeParamPlaceholders.join("|"), "gi"), () => params[i++].toString());
+};
+
+export const buildAbsoluteUrl = (route: string, ...params: (string | number)[]) => {
+    return window.location.origin + buildUrl(route, ...params);
+};
+
+export type BuildUrl = (route: string, ...params: (string | number)[]) => string;

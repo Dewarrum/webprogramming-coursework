@@ -10,9 +10,7 @@ interface ILayoutProps {
 export const Layout : React.FC<ILayoutProps> = (props : ILayoutProps) => {
     return (
         <div>
-            <BrowserRouter>
-                <NavMenu />
-            </BrowserRouter>
+            <NavMenu />
             <Container>
                 {props.children}
             </Container>

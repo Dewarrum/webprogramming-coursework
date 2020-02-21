@@ -6,29 +6,22 @@ import {Home} from "./Pages/Home/Home";
 import {UserListComponent} from "./Components/Users/UserListComponent";
 import {BrowserRouter, Switch} from "react-router-dom";
 import {useRoutes} from 'hookrouter';
-import {Routes} from "./Routes/Routes";
 import {UserProfileComponent} from "./Components/Users/UserProfileComponent";
+import {routes} from "./Routes/Routes";
+import LoginPage from "./Pages/Login/LoginPage";
+import Authorize from "./Pages/Authorization/Authorize";
 
 export const App: React.FC = () => {
-    const routeResult = useRoutes(Routes);
     return (
-        <Layout>
-            {routeResult}
-        </Layout>
-    )
-};
-
-/* return (
-    <Layout>
         <BrowserRouter>
             <Switch>
-                <Route exact path="/">
-                    <Home />
-                </Route>
-                <Route path="/users/list">
-                    <UserListComponent />
-                </Route>
+                <Route exact path={routes.login} component={LoginPage} />
+                <Layout>
+                    <Authorize>
+                        <Route excat path={routes.home} component={Home} />
+                    </Authorize>
+                </Layout>
             </Switch>
         </BrowserRouter>
-    </Layout>
-); */
+    )
+};
