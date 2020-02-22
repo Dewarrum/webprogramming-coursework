@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem } from 'reactstrap';
-import {BrowserRouter, Link, NavLink} from 'react-router-dom';
+import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import {BrowserRouter, Link} from 'react-router-dom';
 import './NavMenu.css';
+import {routes} from "../../Routes/Routes";
 
 interface IState {
     collapsed: boolean;
@@ -27,13 +28,13 @@ export const NavMenu : React.FC = () => {
                     <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!state.collapsed} navbar>
                         <ul className="navbar-nav flex-grow">
                             <NavItem>
-                                <NavLink className="text-dark" to="/">Home</NavLink>
+                                <NavLink className="text-dark" tag={Link} to="/">Home</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink className="text-dark" to="/list">User list</NavLink>
+                                <NavLink className="text-dark" tag={Link} to={routes.userList}>User list</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink className="text-dark" to="/profile">Profile</NavLink>
+                                <NavLink className="text-dark" tag={Link} to={routes.myProfile}>Profile</NavLink>
                             </NavItem>
                         </ul>
                     </Collapse>

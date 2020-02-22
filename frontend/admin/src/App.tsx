@@ -11,6 +11,7 @@ import {routes} from "./Routes/Routes";
 import LoginPage from "./Pages/Login/LoginPage";
 import Authorize from "./Pages/Authorization/Authorize";
 import SignIn from "./Pages/Authorization/SignIn";
+import MyProfileComponent from "./Components/Users/MyProfileComponent";
 
 export const App: React.FC = () => {
     return (
@@ -20,7 +21,9 @@ export const App: React.FC = () => {
                 <Route exact path={routes.signIn} component={SignIn} />
                 <Layout>
                     <Authorize>
-                        <Route excat path={routes.home} component={Home} />
+                        <Route exact path={routes.home} component={Home} />
+                        <Route exact path={routes.userList} component={UserListComponent} />
+                        <Route exact path={routes.myProfile} component={MyProfileComponent} />
                     </Authorize>
                 </Layout>
             </Switch>

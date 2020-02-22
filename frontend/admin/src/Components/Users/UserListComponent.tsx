@@ -66,7 +66,7 @@ export const UserListComponent : React.FC<IUserListComponentProps> = (props: IUs
     });
 
     const fetchData = async () => {
-        const response = await axios.get("https://localhost:5001/api/users/list",
+        const response = await axios.get("http://localhost:5000/api/users/list",
             {
                 params : {
                     displayName: props.searchParams?.displayName,

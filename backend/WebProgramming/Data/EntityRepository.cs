@@ -122,7 +122,8 @@ namespace Data
 
         public TResult GetById<TResult>(int id, Expression<Func<TEntity, TResult>> selector, bool throwIfNotFound = true)
         {
-            return GetMany(e => e.Id == id, selector).Single();
+            return throwIfNotFound ? GetMany(e => e.Id == id, selector).Single() :
+                GetMany(e => e.Id == id, selector).SingleOrDefault();
         }
 
         public IQueryable<TEntity> GetAll()

@@ -12,7 +12,7 @@ const Authorize: React.FC = props => {
         const currentUserSession = AuthManager.userSession;
         if (currentUserSession) {
             axios
-                .get("/authorize/check")
+                .get("http://localhost:5000/api/authorize/check")
                 .then(() => {
                     setAuthorizedState(true);
                 })

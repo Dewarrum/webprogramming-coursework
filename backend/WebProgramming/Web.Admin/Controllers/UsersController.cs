@@ -2,7 +2,10 @@
 using System.Linq;
 using Common;
 using Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Serilog.Core;
 using Services;
 using Web.Admin.Models.Users;
 
@@ -10,19 +13,23 @@ namespace Web.Admin.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private IUsersRepository UsersRepository { get; }
         private IUserService UserService { get; }
         private IUnitOfWork UnitOfWork { get; }
+        private ILogger<UsersController> Logger { get; }
 
         public UsersController(IUsersRepository usersRepository,
             IUserService userService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ILogger<UsersController> logger)
         {
             UsersRepository = usersRepository;
             UserService = userService;
             UnitOfWork = unitOfWork;
+            Logger = logger;
         }
 
         [HttpGet("List")]
@@ -58,6 +65,41 @@ namespace Web.Admin.Controllers
             };
 
             return Ok(model);
+        }
+
+        [HttpGet("MyProfile")]
+        public ActionResult MyProfile()
+        {
+            var userId = User.Claims.ToDictionary(c => c.Type, c => c.Value)["id"].AsInt();
+
+            var userInfo = UsersRepository.GetById(userId, u => new
+            {
+                u.Login,
+                u.Email,
+                u.DisplayName,
+                u.AvatarUrl
+            });
+            
+            Logger.LogInformation($"User requested profile data {userInfo.ToJson()}.");
+
+            return Ok(userInfo);
+        }
+
+        [HttpGet("Profile/{id}")]
+        public ActionResult Profile(int id)
+        {
+            var userInfo = UsersRepository.GetById(id, u => new
+            {
+                u.Login,
+                u.Email,
+                u.DisplayName,
+                u.AvatarUrl
+            }, false);
+
+            if (userInfo is null)
+                return NotFound($"User with {id} id not found");
+
+            return Ok(userInfo);
         }
     }
 }

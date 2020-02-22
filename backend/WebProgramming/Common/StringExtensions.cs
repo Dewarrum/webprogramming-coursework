@@ -25,5 +25,10 @@ namespace Common
 
             return JsonConvert.DeserializeObject<T>(self);
         }
+
+        public static string ToJson(this object self)
+        {
+            return JsonConvert.SerializeObject(self);
+        }
     }
 }

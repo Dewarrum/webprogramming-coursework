@@ -28,6 +28,7 @@ axios.interceptors.response.use(
     (error: AxiosError) => {
         if (!error.response) {
             alert.error("Unknown error");
+            window.location.href = "login";
             return Promise.reject(error);
         }
 

@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Autofac;
 using Common;
 using Data;
 using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -48,7 +50,7 @@ namespace Web.Admin
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey("secret-key".GetBytes())
+                        IssuerSigningKey = new SymmetricSecurityKey("secret-key-asd-qwe".GetBytes())
                     };
                 });
 
@@ -81,6 +83,18 @@ namespace Web.Admin
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.Use((async (ctx, next) =>
+            {
+                var identity = ctx.User.Identity;
+                if ((identity != null ? (!identity.IsAuthenticated ? 1 : 0) : 1) != 0)
+                {
+                    var authenticateResult = await ctx.AuthenticateAsync("frontend-jwt");
+                    if (authenticateResult.Succeeded && authenticateResult.Principal != null)
+                        ctx.User = authenticateResult.Principal;
+                }
+                await next();
+            }));
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             

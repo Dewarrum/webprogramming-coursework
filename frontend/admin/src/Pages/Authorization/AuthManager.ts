@@ -26,6 +26,7 @@ export class AuthManager {
 
     get userSession(): IUserSession {
         const userSessionJson = localStorage.getItem(this.localStorageKey);
+        console.log(userSessionJson);
         return userSessionJson ? JSON.parse(userSessionJson) : null;
     }
 
@@ -33,29 +34,29 @@ export class AuthManager {
         localStorage.removeItem(this.localStorageKey);
     }
 
-    login(data: any, returnUrl?: string) {
-        console.log(data);
+    login(data: any, callBack: (token: string | null, succeeded: boolean) => void) {
         axios
             .post<IResultModel>("http://localhost:5000/api/authorize", data)
             .then((res: AxiosResponse<IResultModel>) => {
-                const decodedToken = jwt_decode<IUserSessionJwtData>(res.data.token);
-                console.log(decodedToken);
+                const token = res.data.token;
+                const decodedToken = jwt_decode<IUserSessionJwtData>(token);
 
-                if (!localStorage.getItem(this.localStorageKey)) {
-                    localStorage.setItem(
-                        this.localStorageKey,
-                        JSON.stringify({
-                            login: decodedToken.login,
-                            id: decodedToken.id,
-                            accessToken: res.data.token
-                        })
-                    );
-                }
+                localStorage.setItem(
+                    this.localStorageKey,
+                    JSON.stringify({
+                        login: decodedToken.login,
+                        id: decodedToken.id,
+                        accessToken: token
+                    })
+                );
+
+                callBack(token, true);
             })
             .catch(error => {
                 alert.error(error);
-                console.log(error);
-            })
+
+                callBack(null, false);
+            });
     }
 
     signIn(token: string) {

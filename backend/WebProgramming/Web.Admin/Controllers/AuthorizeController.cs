@@ -48,13 +48,15 @@ namespace Web.Admin.Controllers
                 new Claim("id", userInfo.Id.ToString())
             }, DateTime.UtcNow.AddMinutes(30));
 
+            Logger.LogInformation($"User got {token} token.");
             return Ok(new { Token = token, model.ReturnUrl });
         }
 
         [HttpGet("Check"), Authorize]
         public ActionResult Check()
         {
-            return NoContent();
+            Logger.LogInformation("Successful check.");
+            return Ok("Success");
         }
     }
 }
