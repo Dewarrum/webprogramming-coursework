@@ -26,7 +26,6 @@ export class AuthManager {
 
     get userSession(): IUserSession {
         const userSessionJson = localStorage.getItem(this.localStorageKey);
-        console.log(userSessionJson);
         return userSessionJson ? JSON.parse(userSessionJson) : null;
     }
 

@@ -9,7 +9,7 @@ axios.defaults.baseURL = baseURI;
 
 axios.interceptors.request.use(
     config => {
-        if (config.baseURL == baseURI || !config.headers.Authorization && AuthManager.userSession)
+        if (config.baseURL === baseURI || !config.headers.Authorization && AuthManager.userSession)
             config.headers.Authorization = `Bearer ${AuthManager.userSession?.accessToken}`;
 
         return config;

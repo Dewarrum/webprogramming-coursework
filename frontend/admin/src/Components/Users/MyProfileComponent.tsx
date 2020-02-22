@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import axios from "../../Api/axios";
-import {Simulate} from "react-dom/test-utils";
 
 interface IProfileData {
     login: string;
@@ -24,8 +23,10 @@ const MyProfileComponent = () => {
     });
 
     const loadProfileData = async () => {
-        const response = await axios.get("http://localhost:5000/api/users/myprofile");
-        console.log(response);
+        if (state.loaded)
+            return;
+
+        const response = await axios.get( process.env.REACT_APP_BACKEND_URL + "/api/users/myprofile");
 
         setState({
             loaded: true,
@@ -41,6 +42,7 @@ const MyProfileComponent = () => {
                 </div>
                 <div className="col-6">
                     <table className="table table-info">
+                        <tbody>
                         <tr>
                             <td>
                                 <span className="font-weight-bold">Login </span>:
@@ -65,6 +67,7 @@ const MyProfileComponent = () => {
                                 <span>{profileData.displayName}</span>
                             </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

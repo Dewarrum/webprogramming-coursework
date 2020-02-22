@@ -48,7 +48,8 @@ namespace Web.Admin.Controllers
             var userInfos = UsersRepository.Search(searchParams).Select(u => new ListModel.UserInfo
             {
                 Email = u.Email,
-                DisplayName = u.DisplayName
+                DisplayName = u.DisplayName,
+                Id = u.Id
             });
 
             var totalEntries = UsersRepository.Count(searchParams.BuildExpression());
@@ -100,6 +101,23 @@ namespace Web.Admin.Controllers
                 return NotFound($"User with {id} id not found");
 
             return Ok(userInfo);
+        }
+
+        [HttpPost("Profile/Edit")]
+        public ActionResult Edit(EditModel model)
+        {
+            var user = UsersRepository.GetById(model.Id, false);
+
+            if (user is null)
+                return NotFound($"User with {model.Id} could not be found.");
+
+            user.DisplayName = model.DisplayName;
+            user.AvatarUrl = model.AvatarUrl;
+
+            UserService.Save(user);
+            UnitOfWork.Commit();
+
+            return NoContent();
         }
     }
 }

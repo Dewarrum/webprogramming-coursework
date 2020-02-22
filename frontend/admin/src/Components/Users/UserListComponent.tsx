@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Table} from "reactstrap";
 import {ListSearchParams} from "../../Models/ListSearchParams";
-import axios from 'axios';
+import axios from "../../Api/axios";
+import {buildAbsoluteUrl, routes} from "../../Routes/Routes";
 
 interface IUserModel {
     displayName: string;
     email: string;
-    profileUrl: string;
+    id: number;
 }
 
 interface IUserListComponentProps {
@@ -44,11 +45,11 @@ function renderTable(users: IUserModel[]): JSX.Element {
             {
                 users.map((u, i) => {
                     return (
-                        <tr>
+                        <tr key={`tableRow_${i}`}>
                             <th scope="row">{i + 1}</th>
                             <th>{u.displayName}</th>
                             <th>{u.email}</th>
-                            <th><a href={u.profileUrl}>Profile</a></th>
+                            <th><a href={buildAbsoluteUrl(routes.profile, u.id.toString())}>Profile</a></th>
                         </tr>
                     )
                 })
@@ -66,7 +67,10 @@ export const UserListComponent : React.FC<IUserListComponentProps> = (props: IUs
     });
 
     const fetchData = async () => {
-        const response = await axios.get("http://localhost:5000/api/users/list",
+        if (state.loaded)
+            return;
+
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/list`,
             {
                 params : {
                     displayName: props.searchParams?.displayName,
