@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Newtonsoft.Json;
 
 namespace Common
 {
@@ -15,6 +16,14 @@ namespace Common
                 return true;
 
             return self.Length == 0;
+        }
+        
+        public static T FromJson<T>(this string self)
+        {
+            if (self.IsEmpty())
+                return default(T);
+
+            return JsonConvert.DeserializeObject<T>(self);
         }
     }
 }

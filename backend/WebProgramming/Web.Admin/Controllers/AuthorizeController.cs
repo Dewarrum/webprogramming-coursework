@@ -1,6 +1,13 @@
-﻿using Data;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Common;
+using Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Services.Utils;
+using Web.Admin.App;
 using Web.Admin.Models.Account;
 
 namespace Web.Admin.Controllers
@@ -11,12 +18,15 @@ namespace Web.Admin.Controllers
     {
         private IUsersRepository UsersRepository { get; }
         private IPasswordHashingService PasswordHashingService { get; }
+        private ILogger<AuthorizeController> Logger { get; }
 
         public AuthorizeController(IUsersRepository usersRepository,
-            IPasswordHashingService passwordHashingService)
+            IPasswordHashingService passwordHashingService,
+            ILogger<AuthorizeController> logger)
         {
             UsersRepository = usersRepository;
             PasswordHashingService = passwordHashingService;
+            Logger = logger;
         }
 
         [HttpPost]
@@ -32,15 +42,19 @@ namespace Web.Admin.Controllers
             if (userInfo is null || PasswordHashingService.Hash(model.Password) != userInfo.Password)
                 return Unauthorized("Login or password is incorrect.");
 
-            return Ok();
+            var token = JwtHelpers.GenerateToken(new[]
+            {
+                new Claim("login", userInfo.Login),
+                new Claim("id", userInfo.Id.ToString())
+            }, DateTime.UtcNow.AddMinutes(30));
+
+            return Ok(new { Token = token, model.ReturnUrl });
         }
 
-        [HttpGet("Check")]
+        [HttpGet("Check"), Authorize]
         public ActionResult Check()
         {
-            var token = Request.Headers["Authorize"][0].Split(" ")[1];
-
-            return Ok(token);
+            return NoContent();
         }
     }
 }

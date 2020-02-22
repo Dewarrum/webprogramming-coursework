@@ -13,7 +13,9 @@ const Authorize: React.FC = props => {
         if (currentUserSession) {
             axios
                 .get("/authorize/check")
-                .then(() => setAuthorizedState(true))
+                .then(() => {
+                    setAuthorizedState(true);
+                })
                 .catch(() => {
                     AuthManager.clearSession();
                     NavigateToLoginPage();

@@ -10,6 +10,8 @@ const LoginPage: React.FC = () => {
     const handleChange = (e : FormEvent<HTMLInputElement>) => {
         const newState: any = state;
         newState[e.currentTarget.name] = e.currentTarget.value;
+
+        setState(newState);
     };
 
     return AuthManager.userSession ? (
@@ -20,10 +22,10 @@ const LoginPage: React.FC = () => {
                 <CardBody>
                     <h1>Login</h1>
                     <Label for="login">Login</Label>
-                    <Input id="login" name="login" />
+                    <Input id="login" name="login" onChange={handleChange}/>
                     <Label for="password">Password</Label>
-                    <Input id="password" name="password" />
-                    <Button color="primary" onClick={() => AuthManager.login(buildUrl(routes.home))}>Login</Button>
+                    <Input id="password" name="password" onChange={handleChange}/>
+                    <Button color="primary" onClick={() => AuthManager.login(state, buildUrl(routes.home))}>Login</Button>
                 </CardBody>
             </Card>
         </Container>

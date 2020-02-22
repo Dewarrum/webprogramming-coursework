@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Common;
 using Data;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Services;
 using Services.Utils;
 
@@ -36,12 +39,29 @@ namespace Web.Admin
             services.AddControllers();
 
             services.AddDbContext<CwContext>();
-            
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(o =>
+
+            services.AddAuthentication("frontend-jwt")
+                .AddJwtBearer("frontend-jwt", o =>
                 {
-                    o.LoginPath = new PathString("/Account/Login");
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey("secret-key".GetBytes())
+                    };
                 });
+
+            services.AddAuthorization(o =>
+            {
+                o.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes("frontend-jwt")
+                    .Build();
+            });
+
+            services.AddMvc(c => { c.EnableEndpointRouting = false; }).ConfigureApiBehaviorOptions(
+                o => { o.SuppressMapClientErrors = true; }).AddControllersAsServices();
             
             services.AddHangfire(c =>
                 c.UsePostgreSqlStorage("Host=127.0.0.1;Database=webcw;Username=asp;Password=asp"));
@@ -54,10 +74,8 @@ namespace Web.Admin
             {
                 app.UseDeveloperExceptionPage();
 
-                app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod());
+                app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             }
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -68,6 +86,8 @@ namespace Web.Admin
             
             app.UseHangfireServer();
             app.UseHangfireDashboard();
+
+            app.UseMvc();
         }
         
         public void ConfigureContainer(ContainerBuilder builder)

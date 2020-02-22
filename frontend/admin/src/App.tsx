@@ -10,12 +10,14 @@ import {UserProfileComponent} from "./Components/Users/UserProfileComponent";
 import {routes} from "./Routes/Routes";
 import LoginPage from "./Pages/Login/LoginPage";
 import Authorize from "./Pages/Authorization/Authorize";
+import SignIn from "./Pages/Authorization/SignIn";
 
 export const App: React.FC = () => {
     return (
         <BrowserRouter>
             <Switch>
                 <Route exact path={routes.login} component={LoginPage} />
+                <Route exact path={routes.signIn} component={SignIn} />
                 <Layout>
                     <Authorize>
                         <Route excat path={routes.home} component={Home} />

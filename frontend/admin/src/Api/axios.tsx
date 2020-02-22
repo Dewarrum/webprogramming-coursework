@@ -5,10 +5,12 @@ import {alert} from "../Components/shared/alert";
 
 const axios = axiosGlobal.create();
 const baseURI = process.env.REACT_APP_API_URL + "/api";
+axios.defaults.baseURL = baseURI;
+
 axios.interceptors.request.use(
     config => {
         if (config.baseURL == baseURI || !config.headers.Authorization && AuthManager.userSession)
-            config.headers.Authorization = `Bearer ${AuthManager.userSession.accessToken}`;
+            config.headers.Authorization = `Bearer ${AuthManager.userSession?.accessToken}`;
 
         return config;
     },
@@ -17,7 +19,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     response => {
         if (response.config.showSuccessAlert) {
-            alert.success(response.config.successMessage || (response.config.method == "DELETE" && "Deleted successfully")
+            alert.success(response.config.successMessage || (response.config.method === "DELETE" && "Deleted successfully")
             || "Changes have been saved successfully.");
         }
 
