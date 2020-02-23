@@ -7,6 +7,7 @@ namespace Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -26,6 +27,10 @@ namespace Data
             modelBuilder.Entity<Post>()
                 .HasOne(p => p.Owner)
                 .WithMany(o => o.Posts);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Followings)
+                .WithOne(s => s.Follower);
         }
     }
 }

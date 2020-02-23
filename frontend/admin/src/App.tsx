@@ -11,6 +11,7 @@ import Authorize from "./Pages/Authorization/Authorize";
 import SignIn from "./Pages/Authorization/SignIn";
 import MyProfileComponent from "./Components/Users/MyProfileComponent";
 import UserProfileComponent from "./Components/Users/UserProfileComponent";
+import EditProfileComponent from "./Components/Users/EditProfileComponent";
 
 export const App: React.FC = () => {
     return (
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
                         <Route exact path={routes.userList} component={UserListComponent} />
                         <Route exact path={routes.myProfile} component={MyProfileComponent} />
                         <Route exact path={routes.profile} component={UserProfileComponent} />
+                        <Route exact path={routes.edit} component={EditProfileComponent} />
                     </Authorize>
                 </Layout>
             </Switch>

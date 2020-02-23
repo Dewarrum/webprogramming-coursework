@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from "react";
 import axios from "../../Api/axios";
-
-interface IProfileData {
-    login: string;
-    email: string;
-    displayName: string;
-    avatarUrl: string;
-}
+import {UserProfileData} from "../../Models/Users/UserProfileData";
+import {renderUserProfile} from "../../Models/Users/RenderUtils";
+import {useHistory} from "react-router-dom";
+import AuthManager from "../../Pages/Authorization/AuthManager";
 
 interface IState {
     loaded: boolean;
-    data: IProfileData;
+    data: UserProfileData;
 }
 
 const MyProfileComponent = () => {
@@ -18,9 +15,15 @@ const MyProfileComponent = () => {
         loaded: false
     } as IState);
 
+    const history = useHistory();
+
     useEffect(() => {
         loadProfileData();
     });
+
+    const navigateToEdit = () => {
+        history.push(`/users/edit/${AuthManager.userSession.id}`);
+    };
 
     const loadProfileData = async () => {
         if (state.loaded)
@@ -34,50 +37,11 @@ const MyProfileComponent = () => {
         });
     };
 
-    const renderProfile = (profileData: IProfileData) => {
-        return (
-            <div className="container row">
-                <div className="col-6">
-                    <img  src={profileData.avatarUrl} alt="avatar"/>
-                </div>
-                <div className="col-6">
-                    <table className="table table-info">
-                        <tbody>
-                        <tr>
-                            <td>
-                                <span className="font-weight-bold">Login </span>:
-                            </td>
-                            <td>
-                                <span>{profileData.login}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span className="font-weight-bold">Email </span>:
-                            </td>
-                            <td>
-                                <span>{profileData.email}</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span className="font-weight-bold">Display name </span>:
-                            </td>
-                            <td>
-                                <span>{profileData.displayName}</span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        )
-    };
-
-    let content = state.loaded ? renderProfile(state.data) : <p>Loading...</p>
+    let content = state.loaded ? renderUserProfile(state.data) : <p>Loading...</p>
     return (
         <div>
             {content}
+            <button onClick={navigateToEdit}>Edit</button>
         </div>
     )
 };

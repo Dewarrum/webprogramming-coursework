@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Common;
 using Data;
+using Domain;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication;
@@ -121,6 +122,7 @@ namespace Web.Admin
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
             builder.RegisterType<PostsRepository>().As<IPostsRepository>();
             builder.RegisterType<PostService>().As<IPostService>();
+            builder.RegisterType<SubscriptionRepository>().As<ISubscriptionRepository>();
         }
     }
 }

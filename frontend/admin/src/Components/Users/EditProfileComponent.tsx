@@ -1,15 +1,29 @@
-import React, {useEffect, useState} from 'react';
-import {useHistory, useParams} from 'react-router-dom';
-import axios from "../../Api/axios";
+import React, {useEffect, useState} from "react";
 import {UserProfileData} from "../../Models/Users/UserProfileData";
+import {useParams, useHistory} from "react-router-dom";
+import axios from "../../Api/axios";
 import {renderUserProfile} from "../../Models/Users/RenderUtils";
+import {Input, Label} from "reactstrap";
+import SingleImageUploadComponent from "../ImageUploading/SingleImageUploadComponent";
 
 interface IState {
     loaded: boolean;
     data: UserProfileData;
 }
 
-const UserProfileComponent = () => {
+const renderEditProfileForm = (userProfileData: UserProfileData) => {
+    return (
+        <div>
+            <div>
+                <Label for="displayName">Display Name</Label>
+                <Input id="displayName" type="text" />
+            </div>
+            <SingleImageUploadComponent />
+        </div>
+    )
+};
+
+const EditProfileComponent = () => {
     const { id } = useParams();
     const [state, setState] = useState({
         loaded: false
@@ -43,9 +57,9 @@ const UserProfileComponent = () => {
     return (
         <div>
             {content}
-            <button onClick={navigateToEdit}>Edit</button>
+            <button onClick={navigateToEdit}>Save</button>
         </div>
     )
 };
 
-export default UserProfileComponent;
+export default EditProfileComponent;

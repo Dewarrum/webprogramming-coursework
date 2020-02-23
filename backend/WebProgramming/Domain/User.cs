@@ -11,6 +11,11 @@ namespace Domain
         public string AvatarUrl { get; set; }
 
         public List<Post> Posts { get; set; }
-        public List<User> Friends { get; set; }
+        
+        // Self followments to others
+        public List<Subscription> Followments { get; set; }
+        
+        // Other followments to self
+        public List<Subscription> Followings { get; set; }
     }
 }

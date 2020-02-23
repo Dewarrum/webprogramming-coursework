@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Common;
@@ -9,6 +10,8 @@ namespace Data
     public interface IUsersRepository : IEntityRepository<User>
     {
         IQueryable<User> Search(ListSearchParams searchParams);
+        IEnumerable<User> GetFollowersByUserId(int userId);
+        IEnumerable<User> GetFollowedByUserId(int userId);
     }
     
     public class UsersRepository : EntityRepositoryBase<User>, IUsersRepository
@@ -20,18 +23,17 @@ namespace Data
 
         public IQueryable<User> Search(ListSearchParams searchParams)
         {
-            var query = GetAll();
+            return GetMany(searchParams.BuildExpression()).OrderBy(u => u.CreatedAt).Skip(searchParams.Skip).Take(searchParams.Take);
+        }
 
-            if (!searchParams.Email.IsEmpty())
-                query = query.Where(u => u.Email.Contains(searchParams.Email));
+        public IEnumerable<User> GetFollowersByUserId(int userId)
+        {
+            return GetById(userId, u => u.Followings.Select(f => f.Follower));
+        }
 
-            if (!searchParams.Login.IsEmpty())
-                query = query.Where(u => u.Login.Contains(searchParams.Login));
-
-            if (!searchParams.DisplayName.IsEmpty())
-                query = query.Where(u => u.DisplayName.Contains(searchParams.DisplayName));
-
-            return query.OrderBy(u => u.CreatedAt).Skip(searchParams.Skip).Take(searchParams.Take);
+        public IEnumerable<User> GetFollowedByUserId(int userId)
+        {
+            return GetById(userId, u => u.Followments.Select(f => f.Followed));
         }
     }
 

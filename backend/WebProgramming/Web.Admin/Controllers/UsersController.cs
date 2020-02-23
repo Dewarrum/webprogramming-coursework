@@ -89,12 +89,24 @@ namespace Web.Admin.Controllers
         [HttpGet("Profile/{id}")]
         public ActionResult Profile(int id)
         {
-            var userInfo = UsersRepository.GetById(id, u => new
+            var userInfo = UsersRepository.GetById(id, u => new ProfileModel
             {
-                u.Login,
-                u.Email,
-                u.DisplayName,
-                u.AvatarUrl
+                Login = u.Login,
+                Email = u.Email,
+                DisplayName = u.DisplayName,
+                AvatarUrl = u.AvatarUrl,
+                Followers = u.Followings.Select(f => new ProfileModel.UserInfo
+                {
+                    DisplayName = f.Follower.DisplayName,
+                    Id = f.Follower.Id,
+                    Login = f.Follower.Login
+                }),
+                Followed = u.Followments.Select(f => new ProfileModel.UserInfo
+                {
+                    DisplayName = f.Followed.DisplayName,
+                    Id = f.Followed.Id,
+                    Login = f.Followed.Login
+                })
             }, false);
 
             if (userInfo is null)
@@ -115,6 +127,17 @@ namespace Web.Admin.Controllers
             user.AvatarUrl = model.AvatarUrl;
 
             UserService.Save(user);
+            UnitOfWork.Commit();
+
+            return NoContent();
+        }
+
+        [HttpPost("Profile/Follow")]
+        public ActionResult Follow(FollowModel model)
+        {
+            var userId = User.Claims.ToDictionary(c => c.Type, c => c.Value)["id"].AsInt();
+            
+            UserService.CreateSubscription(userId, model.UserToFollowId);
             UnitOfWork.Commit();
 
             return NoContent();
