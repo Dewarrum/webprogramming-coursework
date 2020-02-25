@@ -4,25 +4,34 @@ import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
 import {Routes} from '../Routes/routes';
 import {map} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {UserProfileData} from '../Models/UserProfileData';
 
 interface ILoginModel {
   token: string;
   returnUrl: string;
 }
 
+interface IUser {
+  login: string;
+  id: number;
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private backendUrl: 'http://localhost:5000';
-  constructor(private http: HttpClient, private router: Router) { }
-  public check(): Promise<any> {
-    return this.http.get(this.backendUrl).toPromise();
+  private currentUserSubject: BehaviorSubject<IUser>;
+  private currentUser: Observable<IUser>;
+  constructor(private http: HttpClient, private router: Router) {
+    this.currentUserSubject = new BehaviorSubject<IUser>(JSON.parse(localStorage.getItem(environment.apiTokenKey)));
+    this.currentUser = this.currentUserSubject.asObservable();
   }
-  public login() {
+  public login(login: string, password: string) {
     const body = {
-      login: 'Admin',
-      password: '123'
+      login,
+      password
     };
 
     return this.http.post<any>(`${environment.backendUrl}/api/authorize`, body)
@@ -32,9 +41,17 @@ export class ApiService {
         return res;
       }));
   }
-  public get currentUser() {
-    return {
-      token: JSON.parse(localStorage.getItem(environment.apiTokenKey))
-    };
+  public get currentUserValue() {
+    return this.currentUserSubject.value;
+  }
+  public logout() {
+    localStorage.removeItem(environment.apiTokenKey);
+    this.currentUserSubject.next(null);
+  }
+  public getUserProfileData(id: number): Observable<UserProfileData> {
+    return this.http.get<UserProfileData>(`${environment.backendUrl}/api/users/profile/${id}`);
+  }
+  public getMyUserProfileData(): Observable<UserProfileData> {
+    return this.http.get<UserProfileData>(`${environment.backendUrl}/api/users/myProfile`);
   }
 }

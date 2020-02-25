@@ -8,11 +8,13 @@ import {catchError} from 'rxjs/operators';
 export class JwtTokenInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authData: any = JSON.parse(localStorage.getItem(environment.apiTokenKey));
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${authData.token}`
-      }
-    });
+    if (authData) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${authData.token}`
+        }
+      });
+    }
     return next.handle(req).pipe(catchError(err => {
       const error = err.error.message || err.status;
       return throwError(error);

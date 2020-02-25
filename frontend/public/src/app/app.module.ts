@@ -6,10 +6,13 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './Components/NavMenu/nav-menu/nav-menu.component';
 import { HomeComponent } from './Components/home/home.component';
 import { LayoutComponent } from './Components/layout/layout.component';
-import { UserProfileComponent } from './Components/user-profile/user-profile.component';
+import { UserProfileComponent } from './Components/Users/user-profile/user-profile.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {JwtTokenInterceptor} from './Api/jwt-token-interceptor';
 import {AuthorizeGuard} from './Guards/authorize.guard';
+import { LoginComponent } from './Components/login/login.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import { MyProfileComponent } from './Components/Users/my-profile/my-profile.component';
 
 @NgModule({
   declarations: [
@@ -17,12 +20,15 @@ import {AuthorizeGuard} from './Guards/authorize.guard';
     NavMenuComponent,
     HomeComponent,
     LayoutComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    LoginComponent,
+    MyProfileComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
