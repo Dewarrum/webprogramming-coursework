@@ -45,11 +45,12 @@ namespace Web.Admin.Controllers
                 Email = email
             };
 
-            var userInfos = UsersRepository.Search(searchParams).Select(u => new ListModel.UserInfo
+            var userInfos = UsersRepository.Search(searchParams).Select(u => new UserInfo
             {
                 Email = u.Email,
                 DisplayName = u.DisplayName,
-                Id = u.Id
+                Id = u.Id,
+                AvatarUrl = u.AvatarUrl
             });
 
             var totalEntries = UsersRepository.Count(searchParams.BuildExpression());
@@ -113,6 +114,25 @@ namespace Web.Admin.Controllers
                 return NotFound($"User with {id} id not found");
 
             return Ok(userInfo);
+        }
+
+        [HttpGet("Profile/Followers")]
+        public ActionResult Followers()
+        {
+            var userId = User.Claims.ToDictionary(c => c.Type, c => c.Value)["id"].AsInt();
+
+            var model = UsersRepository.GetById(userId, u => new FollowersModel
+            {
+                Followers = u.Followings.Select(f => new UserInfo
+                {
+                    AvatarUrl = f.Follower.AvatarUrl,
+                    DisplayName = f.Follower.DisplayName,
+                    Email = f.Follower.Email,
+                    Id = f.FollowerId
+                })
+            });
+
+            return Ok(model);
         }
 
         [HttpPost("Profile/Edit")]

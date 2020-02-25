@@ -6,6 +6,7 @@ import {Routes} from '../Routes/routes';
 import {map} from 'rxjs/operators';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {UserProfileData} from '../Models/UserProfileData';
+import {UserPreviewData} from '../Models/UserPreviewData';
 
 interface ILoginModel {
   token: string;
@@ -16,6 +17,10 @@ interface IUser {
   login: string;
   id: number;
   token: string;
+}
+
+interface IFollowersModel {
+  followers: UserPreviewData[];
 }
 
 @Injectable({
@@ -37,9 +42,11 @@ export class ApiService {
     return this.http.post<any>(`${environment.backendUrl}/api/authorize`, body)
       .pipe(map(res => {
         localStorage.setItem(environment.apiTokenKey, JSON.stringify(res));
-        console.log(res);
         return res;
       }));
+  }
+  public check(): Observable<any> {
+    return this.http.get(`${environment.backendUrl}/api/authorize/check`);
   }
   public get currentUserValue() {
     return this.currentUserSubject.value;
@@ -53,5 +60,8 @@ export class ApiService {
   }
   public getMyUserProfileData(): Observable<UserProfileData> {
     return this.http.get<UserProfileData>(`${environment.backendUrl}/api/users/myProfile`);
+  }
+  public getFollowers(): Observable<IFollowersModel> {
+    return this.http.get<IFollowersModel>(`${environment.backendUrl}/api/users/profile/followers`);
   }
 }

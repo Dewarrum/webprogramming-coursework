@@ -9,7 +9,7 @@ namespace Data
     }
     public class SubscriptionRepository : EntityRepositoryBase<Subscription>, ISubscriptionRepository
     {
-        protected SubscriptionRepository(CwContext dbContext) : base(dbContext)
+        public SubscriptionRepository(CwContext dbContext) : base(dbContext)
         {
         }
     }

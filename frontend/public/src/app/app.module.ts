@@ -13,6 +13,8 @@ import {AuthorizeGuard} from './Guards/authorize.guard';
 import { LoginComponent } from './Components/login/login.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import { MyProfileComponent } from './Components/Users/my-profile/my-profile.component';
+import { UsersTableComponent } from './Components/Users/users-table/users-table.component';
+import { FollowersTableComponent } from './Components/Users/followers-table/followers-table.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { MyProfileComponent } from './Components/Users/my-profile/my-profile.com
     LayoutComponent,
     UserProfileComponent,
     LoginComponent,
-    MyProfileComponent
+    MyProfileComponent,
+    UsersTableComponent,
+    FollowersTableComponent
   ],
   imports: [
     BrowserModule,
