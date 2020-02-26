@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Data;
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +15,21 @@ namespace Web.Admin.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class ImagesController : ControllerBase
     {
         private const string MediaDomain = "http://localhost:5000";
         
         private ILogger<ImagesController> Logger { get; }
+        private IMediaRepository MediaRepository { get; }
+        private IUnitOfWork UnitOfWork { get; }
 
-        public ImagesController(ILogger<ImagesController> logger)
+        public ImagesController(ILogger<ImagesController> logger,
+            IMediaRepository mediaRepository,
+            IUnitOfWork unitOfWork)
         {
             Logger = logger;
+            MediaRepository = mediaRepository;
+            UnitOfWork = unitOfWork;
         }
         
         [HttpPost("Upload")]
@@ -43,6 +50,19 @@ namespace Web.Admin.Controllers
                 await file.CopyToAsync(stream);
             
                 model.Images.Add(new UploadResponseModel.ImageInfo { Url = $"{MediaDomain}/Images/Raws/{fileName}"});
+
+                var buffer = new byte[file.Length];
+                await using var s = new MemoryStream(buffer);
+                await file.CopyToAsync(s);
+
+                var media = new Media
+                {
+                    Content = buffer,
+                    Type = MediaType.Image
+                };
+                
+                MediaRepository.Save(media);
+                UnitOfWork.Commit();
             }
             
             model.Date = DateTime.UtcNow;
@@ -50,10 +70,13 @@ namespace Web.Admin.Controllers
             return Ok(model);
         }
 
-        public class Image
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetImage(int id)
         {
-            public string Name { get; set; }
-            public int Size { get; set; }
+            var content = MediaRepository.GetById(id, m => m.Content);
+            await using var stream = new MemoryStream(content);
+
+            return File(content, "image/jpg");
         }
     }
 }
