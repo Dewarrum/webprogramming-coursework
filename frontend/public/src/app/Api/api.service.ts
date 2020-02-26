@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
 import {Routes} from '../Routes/routes';
@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {UserProfileData} from '../Models/UserProfileData';
 import {UserPreviewData} from '../Models/UserPreviewData';
+import {SearchModel, SearchParams} from '../Models/SearchParams';
 
 interface ILoginModel {
   token: string;
@@ -63,5 +64,16 @@ export class ApiService {
   }
   public getFollowers(): Observable<IFollowersModel> {
     return this.http.get<IFollowersModel>(`${environment.backendUrl}/api/users/profile/followers`);
+  }
+  public searchUsers(searchParams: SearchParams): Observable<SearchModel> {
+    const params = new HttpParams();
+
+    params.append('skip', searchParams.skip.toString(10));
+    params.append('take', searchParams.take.toString(10));
+    params.append('login', searchParams.login);
+    params.append('email', searchParams.email);
+    params.append('displayName', searchParams.displayName);
+
+    return this.http.get<SearchModel>(`${environment.backendUrl}/api/users/list`,  { params });
   }
 }

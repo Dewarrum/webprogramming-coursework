@@ -15,6 +15,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import { MyProfileComponent } from './Components/Users/my-profile/my-profile.component';
 import { UsersTableComponent } from './Components/Users/users-table/users-table.component';
 import { FollowersTableComponent } from './Components/Users/followers-table/followers-table.component';
+import { SearchComponent } from './Components/Users/search/search.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { FollowersTableComponent } from './Components/Users/followers-table/foll
     LoginComponent,
     MyProfileComponent,
     UsersTableComponent,
-    FollowersTableComponent
+    FollowersTableComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
