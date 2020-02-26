@@ -8,6 +8,7 @@ namespace Data
         public DbSet<User> Users { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<Media> Media { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

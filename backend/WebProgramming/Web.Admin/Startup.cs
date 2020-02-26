@@ -123,6 +123,7 @@ namespace Web.Admin
             builder.RegisterType<PostsRepository>().As<IPostsRepository>();
             builder.RegisterType<PostService>().As<IPostService>();
             builder.RegisterType<SubscriptionRepository>().As<ISubscriptionRepository>();
+            builder.RegisterType<MediaRepository>().As<IMediaRepository>();
         }
     }
 }
