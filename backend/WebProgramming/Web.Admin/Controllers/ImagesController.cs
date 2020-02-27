@@ -74,9 +74,11 @@ namespace Web.Admin.Controllers
         public async Task<ActionResult> GetImage(int id)
         {
             var content = MediaRepository.GetById(id, m => m.Content);
-            await using var stream = new MemoryStream(content);
+            var data = $"data:image/jpg;base64,{Convert.ToBase64String(content)}";
+            
+            Logger.LogInformation("Image requested.");
 
-            return File(content, "image/jpg");
+            return Ok(data);
         }
     }
 }

@@ -27,5 +27,3 @@ export const buildUrl = (route: string, ...params: (string | number)[]) => {
 export const buildAbsoluteUrl = (route: string, ...params: (string | number)[]) => {
     return window.location.origin + buildUrl(route, ...params);
 };
-
-export type BuildUrl = (route: string, ...params: (string | number)[]) => string;
