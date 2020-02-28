@@ -60,7 +60,7 @@ const MultipleImagesUploadComponent = () => {
             form: formData
         };
 
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/images/upload`, formData, config)
+        axios.post(`${process.env.REACT_APP_BACKEND_IMAGE_URL}/api/images/upload`, formData, config)
             .then(res => console.log(res))
             .catch(err => console.log(err));
     };
