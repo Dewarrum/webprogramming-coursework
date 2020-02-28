@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Common
@@ -16,6 +17,11 @@ namespace Common
                 return true;
 
             return self.Length == 0;
+        }
+
+        public static string ToUtf8Base64String(this string self)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(self));
         }
         
         public static T FromJson<T>(this string self)
