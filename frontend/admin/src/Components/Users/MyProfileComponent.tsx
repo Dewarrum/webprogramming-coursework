@@ -4,6 +4,7 @@ import {UserProfileData} from "../../Models/Users/UserProfileData";
 import {renderUserProfile} from "../../Models/Users/RenderUtils";
 import {useHistory} from "react-router-dom";
 import AuthManager from "../../Pages/Authorization/AuthManager";
+import {Button} from "reactstrap";
 
 interface IState {
     loaded: boolean;
@@ -41,7 +42,9 @@ const MyProfileComponent = () => {
     return (
         <div>
             {content}
-            <button onClick={navigateToEdit}>Edit</button>
+            <div className="d-flex flex-row-reverse w-100">
+                <Button color="primary" onClick={navigateToEdit}>Edit</Button>
+            </div>
         </div>
     )
 };

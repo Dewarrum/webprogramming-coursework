@@ -1,42 +1,22 @@
 import {UserProfileData} from "./UserProfileData";
 import React from "react";
+import {Card, CardBody, CardHeader} from "reactstrap";
 
 export function renderUserProfile(userProfileData: UserProfileData) {
     return (
-        <div className="container row">
-            <div className="col-6">
+        <div>
+            <div className="w-50 d-inline-block">
                 <img src={userProfileData.avatarUrl} alt="avatar" style={{maxHeight: "300px"}}/>
             </div>
-            <div className="col-6">
-                <table className="table table-info">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <span className="font-weight-bold">Login </span>:
-                        </td>
-                        <td>
-                            <span>{userProfileData.login}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span className="font-weight-bold">Email </span>:
-                        </td>
-                        <td>
-                            <span>{userProfileData.email}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span className="font-weight-bold">Display name </span>:
-                        </td>
-                        <td>
-                            <span>{userProfileData.displayName}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <Card className="w-50 d-inline-block">
+                <CardHeader className="w-auto">
+                    <h4>{userProfileData.displayName}</h4>
+                </CardHeader>
+                <CardBody>
+                    <p>{userProfileData.login}</p>
+                    <p>{userProfileData.email}</p>
+                </CardBody>
+            </Card>
         </div>
     )
 }

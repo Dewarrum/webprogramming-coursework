@@ -3,7 +3,7 @@ import {UserProfileData} from "../../Models/Users/UserProfileData";
 import {useParams, useHistory} from "react-router-dom";
 import axios from "../../Api/axios";
 import {renderUserProfile} from "../../Models/Users/RenderUtils";
-import {Input, Label} from "reactstrap";
+import {Button, Input, Label} from "reactstrap";
 import SingleImageUploadComponent from "../ImageUploading/SingleImageUploadComponent";
 
 interface IState {
@@ -57,7 +57,9 @@ const EditProfileComponent = () => {
     return (
         <div>
             {content}
-            <button onClick={navigateToEdit}>Save</button>
+            <div className="d-flex flex-row-reverse w-100">
+                <Button color="primary" onClick={navigateToEdit}>Save</Button>
+            </div>
         </div>
     )
 };

@@ -3,6 +3,7 @@ import {useHistory, useParams} from 'react-router-dom';
 import axios from "../../Api/axios";
 import {UserProfileData} from "../../Models/Users/UserProfileData";
 import {renderUserProfile} from "../../Models/Users/RenderUtils";
+import {Button} from "reactstrap";
 
 interface IState {
     loaded: boolean;
@@ -43,7 +44,9 @@ const UserProfileComponent = () => {
     return (
         <div>
             {content}
-            <button onClick={navigateToEdit}>Edit</button>
+            <div className="d-flex flex-row-reverse w-100">
+                <Button color="primary" onClick={navigateToEdit}>Edit</Button>
+            </div>
         </div>
     )
 };
