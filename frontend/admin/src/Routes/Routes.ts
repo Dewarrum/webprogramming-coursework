@@ -6,7 +6,8 @@ export const routes = {
     userList: "/users/list",
     profile: "/users/profile/:id",
     myProfile: "/users/myProfile",
-    edit: "/users/edit/:id"
+    editUserProfile: "/users/edit/:id",
+    createUser: "/users/create"
 };
 
 export const buildUrl = (route: string, ...params: (string | number)[]) => {

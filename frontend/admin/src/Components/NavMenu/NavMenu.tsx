@@ -36,6 +36,9 @@ export const NavMenu : React.FC = () => {
                             <NavItem>
                                 <NavLink className="text-dark" tag={Link} to={routes.myProfile}>Profile</NavLink>
                             </NavItem>
+                            <NavItem>
+                                <NavLink className="text-dark" tag={Link} to={routes.createUser}>Create user</NavLink>
+                            </NavItem>
                         </ul>
                     </Collapse>
                 </Container>
