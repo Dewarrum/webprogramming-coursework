@@ -2,8 +2,6 @@ import jwt_decode from "jwt-decode";
 import {buildAbsoluteUrl, routes} from "../../Routes/Routes";
 import axios from "../../Api/axios";
 import { AxiosResponse } from "axios";
-import {alert} from "../../Components/shared/alert";
-import { useHistory } from "react-router-dom";
 
 interface IUserSession {
     accessToken: string;
@@ -52,8 +50,6 @@ export class AuthManager {
                 callBack(token, true);
             })
             .catch(error => {
-                alert.error(error);
-
                 callBack(null, false);
             });
     }

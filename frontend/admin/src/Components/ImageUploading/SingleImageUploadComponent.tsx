@@ -1,7 +1,6 @@
 import React, {useState} from "react";
-import {Button, Input} from "reactstrap";
-import {uploadImage} from "./ImageUploadHelper";
-import {toast} from "react-toastify";
+import {Button, Input, Progress} from "reactstrap";
+import {IImageUploadResult, uploadImage} from "./ImageUploadHelper";
 
 interface IState {
     imageSelected: boolean;
@@ -11,10 +10,15 @@ interface IState {
 
 interface IImageUploadState {
     loading: boolean;
-    loaded: boolean
-};
+    loaded: boolean;
+    percents: number;
+}
 
-const SingleImageUploadComponent = () => {
+interface ISingleImageUploadComponentProps {
+    onImageUploaded?: (url: string) => void;
+}
+
+const SingleImageUploadComponent = (props: ISingleImageUploadComponentProps) => {
     const [uploadState, setUploadState] = useState({
         loaded: false,
         loading: false
@@ -46,16 +50,39 @@ const SingleImageUploadComponent = () => {
         const config = {
             onUploadProgress: function (progressEvent: any) {
                 const percent = Math.round(progressEvent.loaded / progressEvent.total * 100);
+
+                setUploadState({
+                    loading: percent > 0,
+                    loaded: percent === 100,
+                    percents: percent
+                });
             }
-        }
+        };
+
+        const onUploadFinished = (succeeded: boolean, result: IImageUploadResult) => {
+            if (succeeded) {
+                if (succeeded && props.onImageUploaded) {
+                    props.onImageUploaded(result.images[0].url);
+                }
+            }
+
+            setUploadState({
+                loading: false,
+                loaded: true,
+                percents: 100
+            });
+        };
+
+        uploadImage(formData, config, onUploadFinished);
     };
 
-    let content = state.imageSelected ? <img src={state.imageSource!} alt="uploadedImage" className="h-100" /> : <p>Upload image</p>
+    let content = state.imageSelected ? <img src={state.imageSource!} alt="uploadedImage" className="w-100" /> : <p>Upload image</p>
     return (
-        <div className="h-100">
+        <div className="w-100">
             {content}
             <Input type="file" onChange={handleChange} />
             <Button onClick={onUploadClicked}>Upload</Button>
+            <Progress value={uploadState.percents} />
         </div>
     )
 };

@@ -18,8 +18,8 @@ import BasicLayout from "./Pages/Layout/BasicLayout";
 export const App: React.FC = () => {
     return (
         <BrowserRouter>
-            <Switch>
-                <BasicLayout>
+            <BasicLayout>
+                <Switch>
                     <Route exact path={routes.login} component={LoginPage} />
                     <Route exact path={routes.signIn} component={SignIn} />
                     <Layout>
@@ -32,8 +32,8 @@ export const App: React.FC = () => {
                             <Route exact path={routes.createUser} component={CreateUserComponent} />
                         </Authorize>
                     </Layout>
-                </BasicLayout>
-            </Switch>
+                </Switch>
+            </BasicLayout>
         </BrowserRouter>
     )
 };

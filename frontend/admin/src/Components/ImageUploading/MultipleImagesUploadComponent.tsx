@@ -3,11 +3,11 @@ import {Button, Input, Progress, Table} from "reactstrap";
 import axios from "../../Api/axios";
 
 interface IState {
-    images: IIMageModel[];
+    images: IImageModel[];
     imagesUploaded: boolean;
 }
 
-interface IIMageModel {
+interface IImageModel {
     name: string;
     size: number;
     result?: string;
@@ -40,7 +40,7 @@ const MultipleImagesUploadComponent = () => {
         });
     };
 
-    const uploadImage = (image: IIMageModel, index: number) => {
+    const uploadImage = (image: IImageModel, index: number) => {
         const formData = new FormData();
         formData.append("images", image.file);
 
@@ -65,13 +65,13 @@ const MultipleImagesUploadComponent = () => {
             .catch(err => console.log(err));
     };
 
-    const uploadImages = (images: IIMageModel[]) => {
+    const uploadImages = (images: IImageModel[]) => {
         images.forEach((image, index) => {
             uploadImage(image, index);
         });
     };
 
-    const renderTable = (images: IIMageModel[]) => {
+    const renderTable = (images: IImageModel[]) => {
         return (
             <div>
                 <Button onClick={() => uploadImages(state.images)}>Upload all</Button>

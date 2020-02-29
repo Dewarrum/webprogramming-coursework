@@ -2,6 +2,7 @@ import React from "react";
 import axiosGlobal, { AxiosError } from "axios";
 import AuthManager from "../Pages/Authorization/AuthManager";
 import {alert} from "../Components/shared/alert";
+import {toast} from "react-toastify";
 
 const axios = axiosGlobal.create();
 const baseURI = process.env.REACT_APP_API_URL + "/api";
@@ -14,7 +15,7 @@ axios.interceptors.request.use(
 
         return config;
     },
-    error => Promise.reject(error));
+    error => Promise.reject(error.response));
 
 axios.interceptors.response.use(
     response => {
@@ -65,7 +66,7 @@ axios.interceptors.response.use(
                 );
             }
         } else {
-            alert.error(response.status == 0 ? "A connection issue occurred, please try again." : `Unknown server error (${response.status}).`);
+            toast.error(response.status == 0 ? "A connection issue occurred, please try again." : `Unknown server error (${response.status}).`);
         }
 
         return Promise.reject(error);
