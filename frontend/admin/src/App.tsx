@@ -12,22 +12,27 @@ import SignIn from "./Pages/Authorization/SignIn";
 import MyProfileComponent from "./Components/Users/MyProfileComponent";
 import UserProfileComponent from "./Components/Users/UserProfileComponent";
 import EditProfileComponent from "./Components/Users/EditProfileComponent";
+import CreateUserComponent from "./Components/Users/CreateUserComponent";
+import BasicLayout from "./Pages/Layout/BasicLayout";
 
 export const App: React.FC = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route exact path={routes.login} component={LoginPage} />
-                <Route exact path={routes.signIn} component={SignIn} />
-                <Layout>
-                    <Authorize>
-                        <Route exact path={routes.home} component={Home} />
-                        <Route exact path={routes.userList} component={UserListComponent} />
-                        <Route exact path={routes.myProfile} component={MyProfileComponent} />
-                        <Route exact path={routes.profile} component={UserProfileComponent} />
-                        <Route exact path={routes.edit} component={EditProfileComponent} />
-                    </Authorize>
-                </Layout>
+                <BasicLayout>
+                    <Route exact path={routes.login} component={LoginPage} />
+                    <Route exact path={routes.signIn} component={SignIn} />
+                    <Layout>
+                        <Authorize>
+                            <Route exact path={routes.home} component={Home} />
+                            <Route exact path={routes.userList} component={UserListComponent} />
+                            <Route exact path={routes.myProfile} component={MyProfileComponent} />
+                            <Route exact path={routes.profile} component={UserProfileComponent} />
+                            <Route exact path={routes.editUserProfile} component={EditProfileComponent} />
+                            <Route exact path={routes.createUser} component={CreateUserComponent} />
+                        </Authorize>
+                    </Layout>
+                </BasicLayout>
             </Switch>
         </BrowserRouter>
     )
