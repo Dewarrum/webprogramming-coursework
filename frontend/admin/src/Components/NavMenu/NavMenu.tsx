@@ -3,6 +3,7 @@ import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLi
 import {BrowserRouter, Link} from 'react-router-dom';
 import './NavMenu.css';
 import {routes} from "../../Routes/Routes";
+import AuthManager from "../../Pages/Authorization/AuthManager";
 
 interface IState {
     collapsed: boolean;
@@ -17,6 +18,10 @@ export const NavMenu : React.FC = () => {
         setState({
             collapsed: !state.collapsed
         })
+    };
+
+    const onGoToPublicClicked = () => {
+        window.location.href = `${process.env.REACT_APP_PUBLIC_URL}/thirdPartyAuth?token=${AuthManager.userSession.accessToken}`;
     };
 
     return (
@@ -38,6 +43,9 @@ export const NavMenu : React.FC = () => {
                             </NavItem>
                             <NavItem>
                                 <NavLink className="text-dark" tag={Link} to={routes.createUser}>Create user</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink className="text-dark" onClick={onGoToPublicClicked}>Go to Public page</NavLink>
                             </NavItem>
                         </ul>
                     </Collapse>

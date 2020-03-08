@@ -1,18 +1,19 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UserPreviewData} from '../../../Models/UserPreviewData';
+import {UserPreviewModel} from '../../../Models/Users/UserPreviewModel';
 import {Routes} from '../../../Routes/routes';
+import {SearchModel} from '../../../Models/Users/SearchParams';
 
 @Component({
-  selector: 'app-users-table',
-  templateUrl: './users-table.component.html',
-  styleUrls: ['./users-table.component.css']
+    selector: 'app-users-table',
+    templateUrl: './users-table.component.html',
+    styleUrls: ['./users-table.component.css']
 })
 export class UsersTableComponent implements OnInit {
-  @Input() userInfos: UserPreviewData[];
-  public routes = Routes;
-  constructor() { }
+    @Input() searchModel: SearchModel;
+    public routes = Routes;
+    constructor() { }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 
 }

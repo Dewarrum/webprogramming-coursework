@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Web.StaticFiles.App;
 
 namespace Web.StaticFiles
 {
@@ -26,6 +27,8 @@ namespace Web.StaticFiles
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            
+            ConfigureAppSettings(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +48,11 @@ namespace Web.StaticFiles
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
+        
+        private void ConfigureAppSettings(IServiceCollection services)
+        {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
     }
 }

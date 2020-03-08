@@ -3,9 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  apiTokenKey: 'apiToken',
-  backendUrl: 'http://localhost:5000'
+    production: false,
+    apiTokenKey: 'apiToken',
+    backendUrl: 'https://localhost:6001',
+    backendStaticFilesUrl: 'http://localhost:7000'
 };
 
 /*

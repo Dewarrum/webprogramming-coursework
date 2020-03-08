@@ -14,6 +14,7 @@ import UserProfileComponent from "./Components/Users/UserProfileComponent";
 import EditProfileComponent from "./Components/Users/EditProfileComponent";
 import CreateUserComponent from "./Components/Users/CreateUserComponent";
 import BasicLayout from "./Pages/Layout/BasicLayout";
+import PostDetailsComponent from "./Components/Posts/PostDetailsComponent";
 
 export const App: React.FC = () => {
     return (
@@ -30,6 +31,7 @@ export const App: React.FC = () => {
                             <Route exact path={routes.profile} component={UserProfileComponent} />
                             <Route exact path={routes.editUserProfile} component={EditProfileComponent} />
                             <Route exact path={routes.createUser} component={CreateUserComponent} />
+                            <Route exact path={routes.postDetails} component={PostDetailsComponent} />
                         </Authorize>
                     </Layout>
                 </Switch>

@@ -15,22 +15,21 @@ export class AuthorizeGuard implements CanActivate {
     state: RouterStateSnapshot) {
     const currentUser = this.api.currentUserValue;
     if (currentUser) {
-      const response = await this.api
+      const check = await this.api
         .check()
         .toPromise()
         .then(res => {
-          return res;
+          return true;
         })
         .catch(err => {
-          return err;
+          localStorage.removeItem(environment.apiTokenKey);
+          return false;
         });
 
-      if (response === 200) {
-        return true;
-      } else {
-        localStorage.removeItem(environment.apiTokenKey);
-        return false;
+      if (!check) {
+        this.router.navigate([Routes.login]);
       }
+      return check;
     }
 
     this.router.navigate([Routes.login]);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Web.StaticFiles.Models.Images;
 
 namespace Web.StaticFiles.Controllers
@@ -12,6 +14,13 @@ namespace Web.StaticFiles.Controllers
     public class ImagesController : ControllerBase
     {
         private const string Domain = "http://localhost:7000";
+        
+        private ILogger<ImagesController> Logger { get; }
+
+        public ImagesController(ILogger<ImagesController> logger)
+        {
+            Logger = logger;
+        }
         
         [HttpPost("Upload")]
         public async Task<ActionResult> Upload([FromForm(Name = "images")] IFormFileCollection files)
@@ -30,6 +39,8 @@ namespace Web.StaticFiles.Controllers
             }
             
             model.Date = DateTime.UtcNow;
+            var fileNames = model.Images.Select(i => i.Url).ToArray();
+            Logger.LogInformation("New urls: {@fileNames}", (object)fileNames);
 
             return Ok(model);
         }

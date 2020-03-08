@@ -20,34 +20,44 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Services;
 using Services.Utils;
+using Web.Common.App;
+using Web.Common.App.Attributes;
+using Web.Public.App;
 
 namespace Web.Public
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public AppSettings AppSettings { get; set; }
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            AppSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
             
+            ConfigureAppSettings(services);
+            
             services.AddDbContext<CwContext>();
 
-            services.AddAuthentication("frontend-jwt")
-                .AddJwtBearer("frontend-jwt", o =>
+            services.AddAuthentication(JwtAuthorizationConsts.FrontendAuthenticationScheme)
+                .AddJwtBearer(JwtAuthorizationConsts.FrontendAuthenticationScheme, o =>
                 {
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey("secret-key-asd-qwe".GetBytes())
+                        IssuerSigningKey = new SymmetricSecurityKey(AppSettings.SigninSecretKey.GetBytes()),
+                        ValidIssuers = AppSettings.IssuerNames,
+                        ValidAudiences = AppSettings.FrontendUrls
                     };
                 });
 
@@ -55,15 +65,17 @@ namespace Web.Public
             {
                 o.DefaultPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
-                    .AddAuthenticationSchemes("frontend-jwt")
+                    .AddAuthenticationSchemes(JwtAuthorizationConsts.FrontendAuthenticationScheme)
                     .Build();
             });
+
+            services.AddHttpContextAccessor();
 
             services.AddMvc(c => { c.EnableEndpointRouting = false; }).ConfigureApiBehaviorOptions(
                 o => { o.SuppressMapClientErrors = true; }).AddControllersAsServices();
             
             services.AddHangfire(c =>
-                c.UsePostgreSqlStorage("Host=127.0.0.1;Database=webcw;Username=asp;Password=asp"));
+                c.UsePostgreSqlStorage(Configuration.GetConnectionString("PostgreSQL")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +99,7 @@ namespace Web.Public
                 var identity = ctx.User.Identity;
                 if ((identity != null ? (!identity.IsAuthenticated ? 1 : 0) : 1) != 0)
                 {
-                    var authenticateResult = await ctx.AuthenticateAsync("frontend-jwt");
+                    var authenticateResult = await ctx.AuthenticateAsync(JwtAuthorizationConsts.FrontendAuthenticationScheme);
                     if (authenticateResult.Succeeded && authenticateResult.Principal != null)
                         ctx.User = authenticateResult.Principal;
                 }
@@ -104,11 +116,16 @@ namespace Web.Public
         
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new DataModule());
+            builder.RegisterModule(new Services());
+        }
+        
+        private void ConfigureAppSettings(IServiceCollection services)
+        {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
         }
     }
     
-    public class DataModule : Module
+    public class Services : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -119,7 +136,10 @@ namespace Web.Public
             builder.RegisterType<PostsRepository>().As<IPostsRepository>();
             builder.RegisterType<PostService>().As<IPostService>();
             builder.RegisterType<SubscriptionRepository>().As<ISubscriptionRepository>();
-            builder.RegisterType<MediaRepository>().As<IMediaRepository>();
+            builder.RegisterType<PublicContextProvider>().As<IContextProvider>();
+            builder.RegisterType<JwtService>().As<IJwtService>();
+            builder.RegisterType<UserContextProvider>().As<IUserContextProvider>();
+            builder.RegisterType<HasAccessToPostFilter>();
         }
     }
 }

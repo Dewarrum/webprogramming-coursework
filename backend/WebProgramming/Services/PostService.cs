@@ -6,6 +6,7 @@ namespace Services
     public interface IPostService
     {
         void Save(Post post);
+        void ChangeStatus(int id, PostStatus status);
     }
     
     public class PostService : IPostService
@@ -19,6 +20,14 @@ namespace Services
         
         public void Save(Post post)
         {
+            PostsRepository.Save(post);
+        }
+
+        public void ChangeStatus(int id, PostStatus status)
+        {
+            var post = PostsRepository.GetById(id);
+            post.Status = status;
+            
             PostsRepository.Save(post);
         }
     }

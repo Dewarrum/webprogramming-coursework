@@ -17,14 +17,20 @@ namespace Web.Common.Controllers
         private IUsersRepository UsersRepository { get; }
         private IPasswordHashingService PasswordHashingService { get; }
         private ILogger<AuthorizeController> Logger { get; }
+        private IJwtService JwtService { get; }
+        private IContextProvider ContextProvider { get; }
 
         public AuthorizeController(IUsersRepository usersRepository,
             IPasswordHashingService passwordHashingService,
-            ILogger<AuthorizeController> logger)
+            ILogger<AuthorizeController> logger,
+            IJwtService jwtService,
+            IContextProvider contextProvider)
         {
             UsersRepository = usersRepository;
             PasswordHashingService = passwordHashingService;
             Logger = logger;
+            JwtService = jwtService;
+            ContextProvider = contextProvider;
         }
 
         [HttpPost]
@@ -40,10 +46,11 @@ namespace Web.Common.Controllers
             if (userInfo is null || PasswordHashingService.Hash(model.Password) != userInfo.Password)
                 return Unauthorized("Login or password is incorrect.");
 
-            var token = JwtHelpers.GenerateToken(new[]
+            var token = JwtService.GenerateToken(new[]
             {
                 new Claim("login", userInfo.Login),
-                new Claim("id", userInfo.Id.ToString())
+                new Claim("id", userInfo.Id.ToString()),
+                new Claim("isAdministrator", (ContextProvider.Context == ContextType.Admin).ToString()), 
             }, DateTime.UtcNow.AddMinutes(30));
 
             Logger.LogInformation($"User got {token} token.");
@@ -54,7 +61,7 @@ namespace Web.Common.Controllers
         public ActionResult Check()
         {
             Logger.LogInformation("Successful check.");
-            return Ok("Success");
+            return Ok();
         }
     }
 }

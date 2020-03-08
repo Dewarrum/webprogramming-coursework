@@ -1,4 +1,4 @@
-import {UserPreviewData} from './UserPreviewData';
+import {UserPreviewModel} from './UserPreviewModel';
 
 export interface SearchParams {
   skip: number;
@@ -9,7 +9,7 @@ export interface SearchParams {
 }
 
 export interface SearchModel {
-  userInfos: UserPreviewData[];
+  userInfos: UserPreviewModel[];
   searchParams: SearchParams;
   totalPageCount: number;
   totalEntries: number;

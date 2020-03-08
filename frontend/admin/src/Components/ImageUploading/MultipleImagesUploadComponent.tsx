@@ -123,3 +123,8 @@ const MultipleImagesUploadComponent = () => {
 };
 
 export default MultipleImagesUploadComponent;
+/*
+{http://localhost:7000/Images/Raws/c85b21ac689245fba88d77f407816b2d.jpg,
+http://localhost:7000/Images/Raws/0f20667a4ada42569b3bf00348d54e3a.png,
+http://localhost:7000/Images/Raws/4b624b5c8d4542acb786d77f5a29dee2.jpg}
+ */
