@@ -70,6 +70,10 @@ export class ApiService {
     public getFollowers(): Observable<IFollowersModel> {
         return this.http.get<IFollowersModel>(`${environment.backendUrl}/api/users/profile/followers`);
     }
+    public alreadyFollowing(id: number): Observable<boolean> {
+        const queryParams = new HttpParams().append('userId', id.toString());
+        return this.http.get<boolean>(`${environment.backendUrl}/api/users/alreadyFollowing`, { params: queryParams });
+    }
     public getPostDetails(id: number): Observable<PostDetailsModel> {
         return this.http.get<PostDetailsModel>(`${environment.backendUrl}/api/posts/details/${id}`);
     }
@@ -88,6 +92,9 @@ export class ApiService {
     }
     public saveAndFinalizePost(post: PostCreateModel): Observable<PostCreateModel> {
         return this.http.post<PostCreateModel>(`${environment.backendUrl}/api/posts/createAndFinalize`, post);
+    }
+    public followUser(userId: number): Observable<any> {
+        return this.http.post(`${environment.backendUrl}/api/users/follow`, { userToFollowId : userId });
     }
     public searchUsers(searchParams: SearchParams): Observable<SearchModel> {
         let query = new HttpParams();

@@ -28,12 +28,12 @@ namespace Data
 
         public IEnumerable<User> GetFollowersByUserId(int userId)
         {
-            return GetById(userId, u => u.Followings.Select(f => f.Follower));
+            return GetById(userId, u => u.Followments.Select(f => f.Follower));
         }
 
         public IEnumerable<User> GetFollowedByUserId(int userId)
         {
-            return GetById(userId, u => u.Followments.Select(f => f.Followed));
+            return GetById(userId, u => u.Followings.Select(f => f.Followed));
         }
     }
 

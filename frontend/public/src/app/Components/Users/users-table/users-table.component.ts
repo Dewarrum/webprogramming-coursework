@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UserPreviewModel} from '../../../Models/Users/UserPreviewModel';
 import {Routes} from '../../../Routes/routes';
 import {SearchModel} from '../../../Models/Users/SearchParams';
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Services;
 using Web.StaticFiles.App;
 
 namespace Web.StaticFiles
@@ -53,6 +55,19 @@ namespace Web.StaticFiles
         private void ConfigureAppSettings(IServiceCollection services)
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+        }
+        
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new Services());
+        }
+    }
+    
+    public class Services : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<FileSystemImageService>().As<IImageService>();
         }
     }
 }

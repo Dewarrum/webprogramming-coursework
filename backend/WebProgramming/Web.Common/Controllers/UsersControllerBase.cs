@@ -5,6 +5,7 @@ using Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Services;
+using Web.Common.App;
 using Web.Common.Models.Users;
 
 namespace Web.Common.Controllers
@@ -15,16 +16,19 @@ namespace Web.Common.Controllers
         private IUserService UserService { get; }
         private ILogger<UsersControllerBase> Logger { get; }
         private IUnitOfWork UnitOfWork { get; }
+        private IUserContextProvider UserContextProvider { get; }
 
         public UsersControllerBase(IUsersRepository usersRepository,
             IUserService userService,
             ILogger<UsersControllerBase> logger,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IUserContextProvider userContextProvider)
         {
             UsersRepository = usersRepository;
             UserService = userService;
             Logger = logger;
             UnitOfWork = unitOfWork;
+            UserContextProvider = userContextProvider;
         }
         
         [HttpGet("List")]
@@ -67,25 +71,7 @@ namespace Web.Common.Controllers
         [HttpGet("Profile/{id}")]
         public ActionResult Profile(int id)
         {
-            var userInfo = UsersRepository.GetById(id, u => new ProfileModel
-            {
-                Login = u.Login,
-                Email = u.Email,
-                DisplayName = u.DisplayName,
-                AvatarUrl = u.AvatarUrl,
-                Followers = u.Followings.Select(f => new ProfileModel.UserInfo
-                {
-                    DisplayName = f.Follower.DisplayName,
-                    Id = f.Follower.Id,
-                    Login = f.Follower.Login
-                }),
-                Followed = u.Followments.Select(f => new ProfileModel.UserInfo
-                {
-                    DisplayName = f.Followed.DisplayName,
-                    Id = f.Followed.Id,
-                    Login = f.Followed.Login
-                })
-            }, false);
+            var userInfo = UsersRepository.GetById(id, ProfileModel.GetProfileDataExpression, false);
 
             if (userInfo is null)
                 return NotFound($"User with {id} id not found");
@@ -96,19 +82,46 @@ namespace Web.Common.Controllers
         [HttpGet("MyProfile")]
         public ActionResult MyProfile()
         {
-            var userId = User.Claims.ToDictionary(c => c.Type, c => c.Value)["id"].AsInt();
+            var userId = UserContextProvider.Get().Id;
 
-            var userInfo = UsersRepository.GetById(userId, u => new
-            {
-                u.Login,
-                u.Email,
-                u.DisplayName,
-                u.AvatarUrl
-            });
-            
-            Logger.LogInformation($"User requested profile data {userInfo.ToJson()}.");
+            var userInfo = UsersRepository.GetById(userId, ProfileModel.GetProfileDataExpression);
 
             return Ok(userInfo);
+        }
+
+        [HttpGet("Followers")]
+        public ActionResult Followers()
+        {
+            var userId = UserContextProvider.Get().Id;
+            var followers = UsersRepository.GetFollowersByUserId(userId);
+
+            return Ok(new FollowersModel
+            {
+                Followers = followers.Select(f => new UserInfo
+                {
+                    Id = f.Id,
+                    Email = f.Email,
+                    DisplayName = f.DisplayName,
+                    AvatarUrl = f.AvatarUrl
+                })
+            });
+        }
+
+        [HttpGet("AlreadyFollowing")]
+        public ActionResult AlreadyFollowing([FromQuery] int userId)
+        {
+            var id = UserContextProvider.Get().Id;
+            return Ok(UsersRepository.GetFollowedByUserId(id).Select(f => f.Id).Contains(userId));
+        }
+
+        [HttpPost("Follow")]
+        public ActionResult Follow(FollowModel model)
+        {
+            var userId = UserContextProvider.Get().Id;
+            UserService.CreateSubscription(userId, model.UserToFollowId);
+            UnitOfWork.Commit();
+
+            return Ok();
         }
     }
 }

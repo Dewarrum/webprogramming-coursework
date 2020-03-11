@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Services;
 using Web.StaticFiles.Models.Images;
 
 namespace Web.StaticFiles.Controllers
@@ -16,10 +17,12 @@ namespace Web.StaticFiles.Controllers
         private const string Domain = "http://localhost:7000";
         
         private ILogger<ImagesController> Logger { get; }
+        private IImageService ImageService { get; }
 
-        public ImagesController(ILogger<ImagesController> logger)
+        public ImagesController(ILogger<ImagesController> logger, IImageService imageService)
         {
             Logger = logger;
+            ImageService = imageService;
         }
         
         [HttpPost("Upload")]
@@ -43,6 +46,15 @@ namespace Web.StaticFiles.Controllers
             Logger.LogInformation("New urls: {@fileNames}", (object)fileNames);
 
             return Ok(model);
+        }
+
+        [HttpPost("Crop")]
+        public async Task<ActionResult> Crop([FromForm(Name = "images")] IFormFile file)
+        {
+            var inputStream = file.OpenReadStream();
+            var resultStream = ImageService.CropImage(inputStream);
+            resultStream.Position = 0;
+            return File(resultStream, "image/jpeg");
         }
     }
 }

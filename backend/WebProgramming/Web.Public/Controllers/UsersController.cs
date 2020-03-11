@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Services;
+using Web.Common.App;
 using Web.Common.Controllers;
 
 namespace Web.Public.Controllers
@@ -13,7 +14,9 @@ namespace Web.Public.Controllers
         public UsersController(IUsersRepository usersRepository,
             IUserService userService,
             ILogger<UsersControllerBase>logger,
-            IUnitOfWork unitOfWork) : base(usersRepository, userService, logger, unitOfWork)
+            IUnitOfWork unitOfWork,
+            IUserContextProvider userContextProvider) :
+            base(usersRepository, userService, logger, unitOfWork, userContextProvider)
         {
         }
     }

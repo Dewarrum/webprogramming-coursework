@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Web.Admin.Models.Users
+namespace Web.Common.Models.Users
 {
     public class FollowersModel
     {

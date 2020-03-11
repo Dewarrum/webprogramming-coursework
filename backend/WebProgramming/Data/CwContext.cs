@@ -31,6 +31,10 @@ namespace Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Followings)
                 .WithOne(s => s.Follower);
+
+            modelBuilder.Entity<Subscription>()
+                .HasIndex(s => new {s.FollowedId, s.FollowerId})
+                .IsUnique();
         }
     }
 }

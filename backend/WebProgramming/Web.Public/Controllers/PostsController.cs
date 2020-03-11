@@ -71,10 +71,7 @@ namespace Web.Public.Controllers
         [HasAccessToPost]
         public ActionResult Finalize(int id)
         {
-            var post = PostsRepository.GetById(id);
-            post.Status = PostStatus.Finalized;
-            
-            PostService.Save(post);
+            PostService.ChangeStatus(id, PostStatus.Finalized);
             UnitOfWork.Commit();
 
             return Ok();
